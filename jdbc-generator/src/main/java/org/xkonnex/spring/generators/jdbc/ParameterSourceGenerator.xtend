@@ -69,6 +69,6 @@ class ParameterSourceGenerator {
 	}
 	
 	def toPropertyRegistration(PropertyDescriptor pd, String paramVarName, String beanVarName) '''
-		«paramVarName».addValue(«pd.name», «beanVarName».«pd.toGetterCall»);
+		«paramVarName».addValue(«paramVarName», «beanVarName».«pd.toGetterCall»);
 	'''
 }
