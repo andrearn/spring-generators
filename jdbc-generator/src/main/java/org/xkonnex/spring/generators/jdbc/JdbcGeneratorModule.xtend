@@ -15,12 +15,14 @@
  */
 package org.xkonnex.spring.generators.jdbc
 
-import com.google.inject.AbstractModule
+import com.google.inject.Binder
+import javax.inject.Singleton
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.JavaIoFileSystemAccess
 import org.eclipse.xtext.generator.OutputConfiguration
+import org.eclipse.xtext.resource.generic.AbstractGenericResourceRuntimeModule
 
-class JdbcGeneratorModule extends AbstractModule {
+class JdbcGeneratorModule extends AbstractGenericResourceRuntimeModule {
 	
 	static val JAVA = "JAVA"
 	
@@ -28,13 +30,20 @@ class JdbcGeneratorModule extends AbstractModule {
 	
 	new (String genPath) {
 		fsa = new JavaIoFileSystemAccess
-		val javaOut = new OutputConfiguration(JAVA)
-		javaOut.outputDirectory = genPath
-		fsa.outputConfigurations.put(JAVA, javaOut) 
+		fsa.outputPath = genPath 
 	}
 	
-	override protected configure() {
-		bind (typeof(IFileSystemAccess2) ).toInstance(fsa)
+	@Singleton
+	def void configureIFileSystemAccess2(Binder binder) {
+		binder.bind (typeof(IFileSystemAccess2) ).toInstance(fsa)
+	}
+	
+	override protected getFileExtensions() {
+		"none"
+	}
+	
+	override protected getLanguageName() {
+		"none"
 	}
 	
 }

@@ -18,6 +18,7 @@ package org.xkonnex.spring.generators.jdbc
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import javax.inject.Inject
 import java.beans.PropertyDescriptor
+import java.io.File
 
 class RowMapperGenerator {
 	
@@ -33,13 +34,16 @@ class RowMapperGenerator {
 	@Inject
 	private extension BeanIntrospector
 	
+	@Inject 
+	private extension GeneratorExtensions
+	
 	def generate(Class<?> bean) {
 		generate(bean, bean.package.name)
 	}
 	def generate(Class<?> bean, String packageName) {
 		val content = bean.toRowMapper(packageName)
 		var rowMapperClassName = packageName + "." + bean.simpleName + "RowMapper"
-		val fileName = rowMapperClassName.replaceAll("\\/", ".") + ".java"
+		val fileName = rowMapperClassName.classNameToFileName
 		fsa.generateFile(fileName, content)
 	}
 		

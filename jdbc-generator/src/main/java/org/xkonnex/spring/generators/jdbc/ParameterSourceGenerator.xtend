@@ -18,6 +18,7 @@ package org.xkonnex.spring.generators.jdbc
 import javax.inject.Inject
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import java.beans.PropertyDescriptor
+import java.io.File
 
 class ParameterSourceGenerator {
 	
@@ -32,6 +33,9 @@ class ParameterSourceGenerator {
 	
 	@Inject
 	private extension BeanIntrospector
+
+	@Inject 
+	private extension GeneratorExtensions
 	
 	def generate(Class<?> bean) {
 		generate(bean, bean.package.name)
@@ -39,7 +43,7 @@ class ParameterSourceGenerator {
 	def generate(Class<?> bean, String packageName) {
 		val content = bean.toParameterBuilder(packageName)
 		var rowMapperClassName = packageName + "." + bean.simpleName + "ParameterBuilder"
-		val fileName = rowMapperClassName.replaceAll("\\/", ".") + ".java"
+		val fileName = rowMapperClassName.classNameToFileName
 		fsa.generateFile(fileName, content)
 	}
 	
@@ -50,13 +54,12 @@ class ParameterSourceGenerator {
 			import «bean.canonicalName»;
 			
 			import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-			import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 			
 			public class «bean.simpleName»ParameterBuilder {
 				
-				public static SqlParameterSource toParameterSource(«bean.simpleName» bean) {
+				public static MapSqlParameterSource toParameterSource(«bean.simpleName» bean) {
 					MapSqlParameterSource params = new MapSqlParameterSource();
-					«bean.readableProperties.map[].join»
+					«bean.readableProperties.filterNull.map[toPropertyRegistration(it.name, "bean")].join»
 					return params;
 				}
 			
