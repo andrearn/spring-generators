@@ -2,6 +2,7 @@ package org.xkonnex.spring.generators.jdbc;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 public class SampleBean {
 	
@@ -11,6 +12,7 @@ public class SampleBean {
 	private Date birthDate;
 	private Long uid;
 	private boolean modified;
+	private List<String> types;
 	
 	public int getId() {
 		return id;
@@ -47,6 +49,12 @@ public class SampleBean {
 	}
 	public void setModified(boolean modified) {
 		this.modified = modified;
+	}
+	public List<String> getTypes() {
+		return types;
+	}
+	public void setTypes(List<String> types) {
+		this.types = types;
 	}
 
 }
