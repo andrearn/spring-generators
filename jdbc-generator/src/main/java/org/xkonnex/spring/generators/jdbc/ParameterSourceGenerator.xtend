@@ -59,7 +59,7 @@ class ParameterSourceGenerator {
 				
 				public static MapSqlParameterSource toParameterSource(«bean.simpleName» bean) {
 					MapSqlParameterSource params = new MapSqlParameterSource();
-					«bean.readableProperties.filterNull.map[toPropertyRegistration(it.name, "bean")].join»
+					«bean.readableProperties.filterNull.map[toPropertyRegistration("params", "bean")].join»
 					return params;
 				}
 			
