@@ -27,7 +27,11 @@ class BeanMappingFunctions {
 		'''set«pd.name.toFirstUpper»(«expression»)'''
 	}
 	def toGetterCall(PropertyDescriptor pd) {
-		'''get«pd.name.toFirstUpper»()'''
+		if (pd.propertyType.isAssignableFrom(typeof(Boolean)) || pd.propertyType.isAssignableFrom(typeof(boolean))) {
+			'''is«pd.name.toFirstUpper»()'''
+		} else {
+			'''get«pd.name.toFirstUpper»()'''
+		}
 	}
 	
 	def toPropertyTypeImports(Class<?> clazz) {
