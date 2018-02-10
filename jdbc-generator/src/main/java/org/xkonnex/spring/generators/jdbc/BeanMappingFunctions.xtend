@@ -24,10 +24,17 @@ class BeanMappingFunctions {
 	private extension BeanIntrospector
 	
 	def toSetterCall(PropertyDescriptor pd, String expression) {
-		'''set«pd.name.toFirstUpper»(«expression»)'''
+		if (pd.writeMethod !== null) {
+			pd.writeMethod.name
+		} else {
+			'''set«pd.name.toFirstUpper»(«expression»)'''
+		}
 	}
+	
 	def toGetterCall(PropertyDescriptor pd) {
-		if (pd.propertyType.isAssignableFrom(typeof(Boolean)) || pd.propertyType.isAssignableFrom(typeof(boolean))) {
+		if (pd.readMethod !== null) {
+			pd.readMethod.name
+		} else if (pd.propertyType.isAssignableFrom(typeof(Boolean)) || pd.propertyType.isAssignableFrom(typeof(boolean))) {
 			'''is«pd.name.toFirstUpper»()'''
 		} else {
 			'''get«pd.name.toFirstUpper»()'''

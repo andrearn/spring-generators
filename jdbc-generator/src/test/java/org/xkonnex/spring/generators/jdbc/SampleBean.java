@@ -1,6 +1,7 @@
 package org.xkonnex.spring.generators.jdbc;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +14,8 @@ public class SampleBean {
 	private Long uid;
 	private boolean modified;
 	private List<String> types;
+	private Timestamp aTimestamp;
+	private String with_underscore;
 	
 	public int getId() {
 		return id;
@@ -55,6 +58,18 @@ public class SampleBean {
 	}
 	public void setTypes(List<String> types) {
 		this.types = types;
+	}
+	public Timestamp getaTimestamp() {
+		return aTimestamp;
+	}
+	public void setaTimestamp(Timestamp aTimestamp) {
+		this.aTimestamp = aTimestamp;
+	}
+	public String getWith_underscore() {
+		return with_underscore;
+	}
+	public void setWith_underscore(String with_underscore) {
+		this.with_underscore = with_underscore;
 	}
 
 }
