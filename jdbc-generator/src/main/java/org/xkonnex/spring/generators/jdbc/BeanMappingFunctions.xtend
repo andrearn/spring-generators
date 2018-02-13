@@ -25,7 +25,7 @@ class BeanMappingFunctions {
 	
 	def toSetterCall(PropertyDescriptor pd, String expression) {
 		if (pd.writeMethod !== null) {
-			pd.writeMethod.name
+			'''«pd.writeMethod.name»(«expression»)'''
 		} else {
 			'''set«pd.name.toFirstUpper»(«expression»)'''
 		}
@@ -33,7 +33,7 @@ class BeanMappingFunctions {
 	
 	def toGetterCall(PropertyDescriptor pd) {
 		if (pd.readMethod !== null) {
-			pd.readMethod.name
+			'''«pd.readMethod.name»()'''
 		} else if (pd.propertyType.isAssignableFrom(typeof(Boolean)) || pd.propertyType.isAssignableFrom(typeof(boolean))) {
 			'''is«pd.name.toFirstUpper»()'''
 		} else {

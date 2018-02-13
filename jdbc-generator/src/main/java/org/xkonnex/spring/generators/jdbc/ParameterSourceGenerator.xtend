@@ -15,10 +15,10 @@
  */
 package org.xkonnex.spring.generators.jdbc
 
-import javax.inject.Inject
-import org.eclipse.xtext.generator.IFileSystemAccess2
 import java.beans.PropertyDescriptor
-import java.io.File
+import javax.inject.Inject
+import javax.inject.Named
+import org.eclipse.xtext.generator.IFileSystemAccess2
 
 class ParameterSourceGenerator {
 	
@@ -36,6 +36,10 @@ class ParameterSourceGenerator {
 
 	@Inject 
 	private extension GeneratorExtensions
+	
+	@Inject
+	@Named("ignorePropertiesWithThrowsClauses")
+	private boolean ignorePropertiesWithThrowsClauses
 	
 	def generate(Class<?> bean) {
 		generate(bean, bean.package.name)
@@ -68,7 +72,19 @@ class ParameterSourceGenerator {
 		'''
 	}
 	
-	def toPropertyRegistration(PropertyDescriptor pd, String paramVarName, String beanVarName) '''
-		«paramVarName».addValue("«pd.name»", «beanVarName».«pd.toGetterCall»);
-	'''
+	def toPropertyRegistration(PropertyDescriptor pd, String paramVarName, String beanVarName) {
+		if (!ignorePropertiesWithThrowsClauses && !pd.readMethod.exceptionTypes.nullOrEmpty) {
+			'''
+				try {
+					«paramVarName».addValue("«pd.name»", «beanVarName».«pd.toGetterCall»);
+				} catch (Exception e) {
+					// Ignore
+				}
+			'''
+		} else {
+			'''
+				«paramVarName».addValue("«pd.name»", «beanVarName».«pd.toGetterCall»);
+			'''
+		}
+	}
 }

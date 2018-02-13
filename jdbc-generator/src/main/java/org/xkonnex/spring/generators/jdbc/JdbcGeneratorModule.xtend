@@ -21,12 +21,15 @@ import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.JavaIoFileSystemAccess
 import org.eclipse.xtext.generator.OutputConfiguration
 import org.eclipse.xtext.resource.generic.AbstractGenericResourceRuntimeModule
+import javax.inject.Named
+import com.google.inject.name.Names
 
 class JdbcGeneratorModule extends AbstractGenericResourceRuntimeModule {
 	
 	static val JAVA = "JAVA"
 	
-	val JavaIoFileSystemAccess fsa 
+	val JavaIoFileSystemAccess fsa
+	var ignorePropertiesWithThrowsClauses = false
 	
 	new (String genPath) {
 		fsa = new JavaIoFileSystemAccess
@@ -36,6 +39,11 @@ class JdbcGeneratorModule extends AbstractGenericResourceRuntimeModule {
 	@Singleton
 	def void configureIFileSystemAccess2(Binder binder) {
 		binder.bind (typeof(IFileSystemAccess2) ).toInstance(fsa)
+	}
+	
+	@Named("ignorePropertiesWithThrowsClauses")
+	def void configureIgnorePropertiesWithThrowsClauses(Binder binder) {
+		binder.bind (typeof(boolean)).annotatedWith(Names.named("ignorePropertiesWithThrowsClauses")).toInstance(ignorePropertiesWithThrowsClauses);
 	}
 	
 	override protected getFileExtensions() {
