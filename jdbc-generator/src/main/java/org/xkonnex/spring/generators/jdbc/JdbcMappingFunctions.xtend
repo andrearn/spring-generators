@@ -75,4 +75,8 @@ class JdbcMappingFunctions {
 	// Perform was-null check if demanded (for results that the
 	// JDBC driver returns as primitives).
 	}
+	
+	def boolean isComplexProperty(PropertyDescriptor pd) {
+		pd.propertyType.columnTypeAccessorName.toString == "getObject"
+	}
 }

@@ -16,20 +16,27 @@
 package org.xkonnex.spring.generators.jdbc
 
 import com.google.inject.Binder
+import com.google.inject.name.Names
+import javax.inject.Named
 import javax.inject.Singleton
+import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.JavaIoFileSystemAccess
-import org.eclipse.xtext.generator.OutputConfiguration
 import org.eclipse.xtext.resource.generic.AbstractGenericResourceRuntimeModule
-import javax.inject.Named
-import com.google.inject.name.Names
 
 class JdbcGeneratorModule extends AbstractGenericResourceRuntimeModule {
 	
 	static val JAVA = "JAVA"
 	
 	val JavaIoFileSystemAccess fsa
-	var ignorePropertiesWithThrowsClauses = false
+	@Accessors
+	var boolean ignorePropertiesWithThrowsClauses = false
+	@Accessors
+	var boolean ignoreComplexProperties = true
+	@Accessors
+	var String beanBasePackage
+	@Accessors
+	var String mapperBasePackage
 	
 	new (String genPath) {
 		fsa = new JavaIoFileSystemAccess
@@ -44,6 +51,21 @@ class JdbcGeneratorModule extends AbstractGenericResourceRuntimeModule {
 	@Named("ignorePropertiesWithThrowsClauses")
 	def void configureIgnorePropertiesWithThrowsClauses(Binder binder) {
 		binder.bind (typeof(boolean)).annotatedWith(Names.named("ignorePropertiesWithThrowsClauses")).toInstance(ignorePropertiesWithThrowsClauses);
+	}
+	
+	@Named("ignoreComplexProperties")
+	def void configureIgnoreComplexProperties(Binder binder) {
+		binder.bind (typeof(boolean)).annotatedWith(Names.named("ignoreComplexProperties")).toInstance(ignoreComplexProperties);
+	}
+
+	@Named("beanBasePackage")
+	def void configureBeanBasePackage(Binder binder) {
+		binder.bind (typeof(String)).annotatedWith(Names.named("beanBasePackage")).toInstance(beanBasePackage);
+	}
+
+	@Named("mapperBasePackage")
+	def void configureMapperBasePackage(Binder binder) {
+		binder.bind (typeof(String)).annotatedWith(Names.named("mapperBasePackage")).toInstance(mapperBasePackage);
 	}
 	
 	override protected getFileExtensions() {

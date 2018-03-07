@@ -50,7 +50,7 @@ class ParameterSourceGenerator {
 	 * package as the bean class.
 	 */
 	def generate(Class<?> bean) {
-		generate(bean, bean.package.name)
+		generate(bean, bean.toPackage)
 	}
 	
 	/**

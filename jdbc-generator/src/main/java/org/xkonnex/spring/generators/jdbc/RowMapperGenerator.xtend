@@ -19,6 +19,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess2
 import javax.inject.Inject
 import java.beans.PropertyDescriptor
 import java.io.File
+import javax.inject.Named
 
 /**
  * Generator for RowMappers that us the same semantics as BeanPropertyRowMappers, but 
@@ -41,8 +42,11 @@ class RowMapperGenerator {
 	@Inject 
 	private extension GeneratorExtensions
 	
+	@Inject @Named("ignoreComplexProperties")
+	private Boolean ignoreComplexProperties
+	
 	def generate(Class<?> bean) {
-		generate(bean, bean.package.name)
+		generate(bean, bean.toPackage)
 	}
 	def generate(Class<?> bean, String packageName) {
 		val content = bean.toRowMapper(packageName)
@@ -67,7 +71,7 @@ class RowMapperGenerator {
 			@Override
 			public «clazz.simpleName» mapRow(ResultSet rs, int rowNum) throws SQLException {
 				«clazz.simpleName» bo = new «clazz.simpleName»();
-				«clazz.readableProperties.map[toPropertyAssignment].join»
+				«clazz.writableProperties.filter[!isComplexProperty || !ignoreComplexProperties].map[toPropertyAssignment].join»
 				return bo;
 			}
 		}	

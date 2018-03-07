@@ -17,11 +17,18 @@ package org.xkonnex.spring.generators.jdbc
 
 import java.beans.PropertyDescriptor
 import javax.inject.Inject
+import javax.inject.Named
 
 class BeanMappingFunctions {
 	
 	@Inject
 	private extension BeanIntrospector
+	
+	@Inject @Named("beanBasePackage")
+	private String beanBasePackage
+	
+	@Inject @Named("mapperBasePackage")
+	private String mapperBasePackage
 	
 	def toSetterCall(PropertyDescriptor pd, String expression) {
 		if (pd.writeMethod !== null) {
@@ -47,5 +54,13 @@ class BeanMappingFunctions {
 				import «type»;
 			«ENDFOR»
 		'''
+	}
+	
+	def toPackage(Class<?> clazz) {
+		if (beanBasePackage !== null && mapperBasePackage !== null && clazz.package.name.startsWith(beanBasePackage)) {
+			clazz.package.name.replaceFirst(beanBasePackage, mapperBasePackage)
+		} else {
+			clazz.package.name
+		}
 	}
 }
