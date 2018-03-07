@@ -18,16 +18,19 @@ package org.xkonnex.spring.generators.jdbc
 import java.beans.PropertyDescriptor
 import javax.inject.Inject
 import javax.inject.Named
+import javax.annotation.Nullable
 
 class BeanMappingFunctions {
 	
 	@Inject
 	private extension BeanIntrospector
 	
-	@Inject @Named("beanBasePackage")
+	@Inject @Named("beanBasePackage") 
+	@Nullable
 	private String beanBasePackage
 	
 	@Inject @Named("mapperBasePackage")
+	@Nullable
 	private String mapperBasePackage
 	
 	def toSetterCall(PropertyDescriptor pd, String expression) {

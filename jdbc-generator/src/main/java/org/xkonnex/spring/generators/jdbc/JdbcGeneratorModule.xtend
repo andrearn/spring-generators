@@ -17,6 +17,7 @@ package org.xkonnex.spring.generators.jdbc
 
 import com.google.inject.Binder
 import com.google.inject.name.Names
+import com.google.inject.util.Providers
 import javax.inject.Named
 import javax.inject.Singleton
 import org.eclipse.xtend.lib.annotations.Accessors
@@ -60,12 +61,12 @@ class JdbcGeneratorModule extends AbstractGenericResourceRuntimeModule {
 
 	@Named("beanBasePackage")
 	def void configureBeanBasePackage(Binder binder) {
-		binder.bind (typeof(String)).annotatedWith(Names.named("beanBasePackage")).toInstance(beanBasePackage);
+		binder.bind (typeof(String)).annotatedWith(Names.named("beanBasePackage")).toProvider(Providers.<String>of(beanBasePackage));
 	}
 
 	@Named("mapperBasePackage")
 	def void configureMapperBasePackage(Binder binder) {
-		binder.bind (typeof(String)).annotatedWith(Names.named("mapperBasePackage")).toInstance(mapperBasePackage);
+		binder.bind (typeof(String)).annotatedWith(Names.named("mapperBasePackage")).toProvider(Providers.<String>of(mapperBasePackage));
 	}
 	
 	override protected getFileExtensions() {
