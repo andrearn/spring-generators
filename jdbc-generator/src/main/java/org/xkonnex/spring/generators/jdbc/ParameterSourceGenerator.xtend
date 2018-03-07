@@ -20,6 +20,9 @@ import javax.inject.Inject
 import javax.inject.Named
 import org.eclipse.xtext.generator.IFileSystemAccess2
 
+/**
+ * Generator for a builder of MapSqlParaterSources
+ */
 class ParameterSourceGenerator {
 	
 	@Inject 
@@ -41,9 +44,20 @@ class ParameterSourceGenerator {
 	@Named("ignorePropertiesWithThrowsClauses")
 	private boolean ignorePropertiesWithThrowsClauses
 	
+	/**
+	 * Generate a builder that that build a MapSqlParameterSource based on the 
+	 * properties of the given bean class. The builder will be generated in the same
+	 * package as the bean class.
+	 */
 	def generate(Class<?> bean) {
 		generate(bean, bean.package.name)
 	}
+	
+	/**
+	 * Generate a builder that that build a MapSqlParameterSource based on the 
+	 * properties of the given bean class. The builder will be generated in the given 
+	 * package
+	 */
 	def generate(Class<?> bean, String packageName) {
 		val content = bean.toParameterBuilder(packageName)
 		var rowMapperClassName = packageName + "." + bean.simpleName + "ParameterBuilder"

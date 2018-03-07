@@ -20,6 +20,10 @@ import javax.inject.Inject
 import java.beans.PropertyDescriptor
 import java.io.File
 
+/**
+ * Generator for RowMappers that us the same semantics as BeanPropertyRowMappers, but 
+ * do not use reflection or bean introspection.
+ */
 class RowMapperGenerator {
 	
 	@Inject 
@@ -62,7 +66,7 @@ class RowMapperGenerator {
 		
 			@Override
 			public «clazz.simpleName» mapRow(ResultSet rs, int rowNum) throws SQLException {
-				«clazz.simpleName» bo = new «clazz.simpleName»;
+				«clazz.simpleName» bo = new «clazz.simpleName»();
 				«clazz.readableProperties.map[toPropertyAssignment].join»
 				return bo;
 			}

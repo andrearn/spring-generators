@@ -30,46 +30,46 @@ class JdbcMappingFunctions {
 	private extension SpringBeanMappingFunctions
 	
 	def toResultSetAccessorCall(PropertyDescriptor pd) {
-		'''«pd.propertyType.columnTypeAccessorName»(«pd.name.underscoreName»)'''
+		'''«pd.propertyType.columnTypeAccessorName»("«pd.name.underscoreName.toUpperCase»")'''
 	}
 
 	def columnTypeAccessorName(Class<?> requiredType) {
 		// Explicitly extract typed value, as far as possible.
 		if (typeof(String).isAssignableFrom(requiredType)) {
-			'''String'''
-		} else if (typeof(boolean).isAssignableFrom(requiredType) || typeof(Boolean).isAssignableFrom(requiredType)) {
-			'''Boolean'''
-		} else if (typeof(byte).isAssignableFrom(requiredType) || typeof(Byte).isAssignableFrom(requiredType)) {
-			'''Byte''';
-		} else if (typeof(short).isAssignableFrom(requiredType) || typeof(Short).isAssignableFrom(requiredType)) {
-			'''Short'''
-		} else if (typeof(int).isAssignableFrom(requiredType) || typeof(Integer).isAssignableFrom(requiredType)) {
-			'''Int'''
-		} else if (typeof(long).isAssignableFrom(requiredType) || typeof(Long).isAssignableFrom(requiredType)) {
-			'''index'''
-		} else if (typeof(float).isAssignableFrom(requiredType) || typeof(Float).isAssignableFrom(requiredType)) {
-			'''Float'''
-		} else if (typeof(double).isAssignableFrom(requiredType) || typeof(Double).isAssignableFrom(requiredType) ||
-			typeof(Number).isAssignableFrom(requiredType)) {
-			'''Double'''
-		} else if (typeof(byte[]).isAssignableFrom(requiredType)) {
-			'''Bytes''';
-		} else if (typeof(Date).isAssignableFrom(requiredType)) {
-			'''Date'''
-		} else if (typeof(Time).isAssignableFrom(requiredType)) {
-			'''Time'''
+			'''getString'''
+		} else if (typeof(boolean).equals(requiredType) || typeof(Boolean).equals(requiredType)) {
+			'''getBoolean'''
+		} else if (typeof(byte).equals(requiredType) || typeof(Byte).equals(requiredType)) {
+			'''getByte''';
+		} else if (typeof(short).equals(requiredType) || typeof(Short).equals(requiredType)) {
+			'''getShort'''
+		} else if (typeof(int).equals(requiredType) || typeof(Integer).equals(requiredType)) {
+			'''getInt'''
+		} else if (typeof(long).equals(requiredType) || typeof(Long).equals(requiredType)) {
+			'''getLong'''
+		} else if (typeof(float).equals(requiredType) || typeof(Float).equals(requiredType)) {
+			'''getFloat'''
+		} else if (typeof(double).equals(requiredType) || typeof(Double).equals(requiredType) ||
+			typeof(Number).equals(requiredType)) {
+			'''getDouble'''
+		} else if (typeof(byte[]).equals(requiredType)) {
+			'''getBytes''';
+		} else if (typeof(Date).equals(requiredType)) {
+			'''getDate'''
+		} else if (typeof(Time).equals(requiredType)) {
+			'''getTime'''
 		} else if (typeof(Timestamp).equals(requiredType) ||
-			typeof(java.util.Date).isAssignableFrom(requiredType)) {
-			'''Timestamp'''
-		} else if (typeof(BigDecimal).isAssignableFrom(requiredType)) {
-			'''BigDecimal'''
-		} else if (typeof(Blob).isAssignableFrom(requiredType)) {
-			'''Blob'''
-		} else if (typeof(Clob).isAssignableFrom(requiredType)) {
-			'''Clob'''
+			typeof(java.util.Date).equals(requiredType)) {
+			'''getTimestamp'''
+		} else if (typeof(BigDecimal).equals(requiredType)) {
+			'''getBigDecimal'''
+		} else if (typeof(Blob).equals(requiredType)) {
+			'''getBlob'''
+		} else if (typeof(Clob).equals(requiredType)) {
+			'''getClob'''
 		} else {
 			// Some unknown type desired -> rely on getObject.
-			'''Object''';
+			'''getObject''';
 		}
 	
 	// Perform was-null check if demanded (for results that the
