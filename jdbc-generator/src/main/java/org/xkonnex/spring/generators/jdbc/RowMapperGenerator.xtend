@@ -55,10 +55,12 @@ class RowMapperGenerator {
 		generate(bean, bean.toPackage)
 	}
 	def generate(Class<?> bean, String packageName) {
-		val content = bean.toRowMapper(packageName)
-		var rowMapperClassName = packageName + "." + bean.simpleName + "RowMapper"
-		val fileName = rowMapperClassName.classNameToFileName
-		fsa.generateFile(fileName, content)
+		if (!bean.writableProperties.filter[!isComplexProperty || !ignoreComplexProperties].nullOrEmpty) {
+			val content = bean.toRowMapper(packageName)
+			var rowMapperClassName = packageName + "." + bean.simpleName + "RowMapper"
+			val fileName = rowMapperClassName.classNameToFileName
+			fsa.generateFile(fileName, content)
+		}
 	}
 		
 	def toRowMapper(Class<?> clazz, String packageName) '''
@@ -70,7 +72,7 @@ class RowMapperGenerator {
 		
 		import «clazz.canonicalName»;
 		«IF rowMapperAnnotationClass !== null»
-			import «rowMapperAnnotationClass»
+			import «rowMapperAnnotationClass»;
 		«ENDIF»
 		
 		import org.springframework.jdbc.core.RowMapper;

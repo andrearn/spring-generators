@@ -64,10 +64,12 @@ class ParameterSourceGenerator {
 	 * package
 	 */
 	def generate(Class<?> bean, String packageName) {
-		val content = bean.toParameterBuilder(packageName)
-		var rowMapperClassName = packageName + "." + bean.simpleName + "ParameterBuilder"
-		val fileName = rowMapperClassName.classNameToFileName
-		fsa.generateFile(fileName, content)
+		if (!bean.readableProperties.nullOrEmpty) {
+			val content = bean.toParameterBuilder(packageName)
+			var rowMapperClassName = packageName + "." + bean.simpleName + "ParameterBuilder"
+			val fileName = rowMapperClassName.classNameToFileName
+			fsa.generateFile(fileName, content)
+		}
 	}
 	
 	def toParameterBuilder(Class<?> bean, String packageName) {
@@ -76,7 +78,7 @@ class ParameterSourceGenerator {
 			
 			import «bean.canonicalName»;
 			«IF parameterSourceAnnotationClass !== null»
-				import «parameterSourceAnnotationClass»
+				import «parameterSourceAnnotationClass»;
 			«ENDIF»
 			
 			import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
