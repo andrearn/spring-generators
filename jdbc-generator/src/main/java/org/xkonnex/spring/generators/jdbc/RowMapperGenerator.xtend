@@ -20,6 +20,8 @@ import javax.inject.Inject
 import java.beans.PropertyDescriptor
 import java.io.File
 import javax.inject.Named
+import javax.annotation.Nullable
+import org.eclipse.xtext.naming.QualifiedName
 
 /**
  * Generator for RowMappers that us the same semantics as BeanPropertyRowMappers, but 
@@ -45,6 +47,10 @@ class RowMapperGenerator {
 	@Inject @Named("ignoreComplexProperties")
 	private Boolean ignoreComplexProperties
 	
+	@Inject @Named("rowMapperAnnotationClass")
+	@Nullable
+	private String rowMapperAnnotationClass
+	
 	def generate(Class<?> bean) {
 		generate(bean, bean.toPackage)
 	}
@@ -63,9 +69,15 @@ class RowMapperGenerator {
 		import java.sql.SQLException;
 		
 		import «clazz.canonicalName»;
+		«IF rowMapperAnnotationClass !== null»
+			import «rowMapperAnnotationClass»
+		«ENDIF»
 		
 		import org.springframework.jdbc.core.RowMapper;
 		
+		«IF rowMapperAnnotationClass !== null»
+			@«rowMapperAnnotationClass.split("\\.").last»
+		«ENDIF»
 		public class «clazz.simpleName»RowMapper implements RowMapper<«clazz.simpleName»> {
 		
 			@Override

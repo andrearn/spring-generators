@@ -38,6 +38,10 @@ class JdbcGeneratorModule extends AbstractGenericResourceRuntimeModule {
 	var String beanBasePackage
 	@Accessors
 	var String mapperBasePackage
+	@Accessors
+	var String parameterSourceAnnotationClass
+	@Accessors
+	var String rowMapperAnnotationClass
 	
 	new (String genPath) {
 		fsa = new JavaIoFileSystemAccess
@@ -67,6 +71,14 @@ class JdbcGeneratorModule extends AbstractGenericResourceRuntimeModule {
 	@Named("mapperBasePackage")
 	def void configureMapperBasePackage(Binder binder) {
 		binder.bind (typeof(String)).annotatedWith(Names.named("mapperBasePackage")).toProvider(Providers.<String>of(mapperBasePackage));
+	}
+	@Named("parameterSourceAnnotationClass")
+	def void configureParameterSourceAnnotationClass(Binder binder) {
+		binder.bind (typeof(String)).annotatedWith(Names.named("parameterSourceAnnotationClass")).toProvider(Providers.<String>of(parameterSourceAnnotationClass));
+	}
+	@Named("rowMapperAnnotationClass")
+	def void configureRowMapperAnnotationClass(Binder binder) {
+		binder.bind (typeof(String)).annotatedWith(Names.named("rowMapperAnnotationClass")).toProvider(Providers.<String>of(rowMapperAnnotationClass));
 	}
 	
 	override protected getFileExtensions() {

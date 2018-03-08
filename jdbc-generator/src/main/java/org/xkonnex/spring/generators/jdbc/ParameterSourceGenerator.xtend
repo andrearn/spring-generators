@@ -19,6 +19,7 @@ import java.beans.PropertyDescriptor
 import javax.inject.Inject
 import javax.inject.Named
 import org.eclipse.xtext.generator.IFileSystemAccess2
+import javax.annotation.Nullable
 
 /**
  * Generator for a builder of MapSqlParaterSources
@@ -43,6 +44,10 @@ class ParameterSourceGenerator {
 	@Inject
 	@Named("ignorePropertiesWithThrowsClauses")
 	private boolean ignorePropertiesWithThrowsClauses
+
+	@Inject @Named("parameterSourceAnnotationClass")
+	@Nullable
+	private String parameterSourceAnnotationClass
 	
 	/**
 	 * Generate a builder that that build a MapSqlParameterSource based on the 
@@ -70,9 +75,15 @@ class ParameterSourceGenerator {
 			package «packageName»;
 			
 			import «bean.canonicalName»;
+			«IF parameterSourceAnnotationClass !== null»
+				import «parameterSourceAnnotationClass»
+			«ENDIF»
 			
 			import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 			
+			«IF parameterSourceAnnotationClass !== null»
+				@«parameterSourceAnnotationClass.split("\\.").last»
+			«ENDIF»
 			public class «bean.simpleName»ParameterBuilder {
 				
 				public static MapSqlParameterSource toParameterSource(«bean.simpleName» bean) {

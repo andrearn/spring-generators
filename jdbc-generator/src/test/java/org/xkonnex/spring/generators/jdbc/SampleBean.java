@@ -16,6 +16,7 @@ public class SampleBean {
 	private List<String> types;
 	private Timestamp aTimestamp;
 	private String with_underscore;
+	private String text1;
 	
 	public int getId() {
 		return id;
@@ -70,6 +71,12 @@ public class SampleBean {
 	}
 	public void setWith_underscore(String with_underscore) {
 		this.with_underscore = with_underscore;
+	}
+	public String getText1() {
+		return text1;
+	}
+	public void setText1(String text1) {
+		this.text1 = text1;
 	}
 
 }
