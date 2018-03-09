@@ -15,20 +15,43 @@
  */
 package org.xkonnex.spring.generators.jdbc;
 
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.springframework.util.StringUtils;
 
 public class SpringBeanMappingFunctions {
 
+	@Inject
+	@Named("useOldFieldnameMapping")
+	private boolean useOldFieldnameMapping;
+
+	@Inject
+	@Named("customPropertyToColumnRules")
+	private Map<String, String> customPropertyToColumnRules;
+
+	public String underscoreName(final String name) {
+		String customName = customPropertyToColumnRules.get(name);
+		if (customName != null) {
+			return customName;
+		} else if (useOldFieldnameMapping) {
+			return underscoreNameOld(name);
+		} else {
+			return underscoreNameNew(name);
+		}
+	}
+
 	/**
-	 * Copied from Springs BeanPropertyRowMapper 
-	 * Convert a name in camelCase to an underscored name in lower case.
-	 * Any upper case letters are converted to lower case with a preceding underscore.
-	 * Used until Spring 3.2.6
+	 * Copied from Springs BeanPropertyRowMapper Convert a name in camelCase to an underscored name in lower case. Any upper case letters are
+	 * converted to lower case with a preceding underscore. Used until Spring 3.2.6
 	 * 
-	 * @param name the string containing original name
+	 * @param name
+	 *            the string containing original name
 	 * @return the converted name
 	 */
-	public String underscoreName(final String name) {
+	public String underscoreNameOld(final String name) {
 		StringBuilder result = new StringBuilder();
 		if (name != null && name.length() > 0) {
 			result.append(name.substring(0, 1).toLowerCase());
@@ -44,14 +67,13 @@ public class SpringBeanMappingFunctions {
 		}
 		return result.toString();
 	}
-	
+
 	/**
-	 * Copied from Springs BeanPropertyRowMapper 
-	 * Convert a name in camelCase to an underscored name in lower case.
-	 * Any upper case letters are converted to lower case with a preceding underscore.
-	 * Used in Spring 3.2.7 and later
+	 * Copied from Springs BeanPropertyRowMapper Convert a name in camelCase to an underscored name in lower case. Any upper case letters are
+	 * converted to lower case with a preceding underscore. Used in Spring 3.2.7 and later
 	 * 
-	 * @param name the string containing original name
+	 * @param name
+	 *            the string containing original name
 	 * @return the converted name
 	 */
 	public String underscoreNameNew(final String name) {
@@ -70,5 +92,13 @@ public class SpringBeanMappingFunctions {
 			}
 		}
 		return result.toString();
+	}
+
+	public boolean isUseOldFieldnameMapping() {
+		return useOldFieldnameMapping;
+	}
+
+	public void setUseOldFieldnameMapping(final boolean useOldFieldnameMapping) {
+		this.useOldFieldnameMapping = useOldFieldnameMapping;
 	}
 }

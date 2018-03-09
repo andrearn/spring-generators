@@ -22,6 +22,8 @@ import java.io.File
 import javax.inject.Named
 import javax.annotation.Nullable
 import org.eclipse.xtext.naming.QualifiedName
+import java.lang.reflect.Constructor
+import java.lang.reflect.Modifier
 
 /**
  * Generator for RowMappers that us the same semantics as BeanPropertyRowMappers, but 
@@ -55,7 +57,13 @@ class RowMapperGenerator {
 		generate(bean, bean.toPackage)
 	}
 	def generate(Class<?> bean, String packageName) {
-		if (!bean.writableProperties.filter[!isComplexProperty || !ignoreComplexProperties].nullOrEmpty) {
+		var Constructor<?> constructor = null
+		try {
+			constructor = bean.getConstructor()
+		} catch (Exception e) {
+			
+		}
+		if (!Modifier.isAbstract(bean.getModifiers()) && constructor !== null && !bean.writableProperties.filter[!isComplexProperty || !ignoreComplexProperties].nullOrEmpty) {
 			val content = bean.toRowMapper(packageName)
 			var rowMapperClassName = packageName + "." + bean.simpleName + "RowMapper"
 			val fileName = rowMapperClassName.classNameToFileName

@@ -18,16 +18,21 @@ package org.xkonnex.spring.generators.jdbc
 import com.google.inject.Binder
 import com.google.inject.name.Names
 import com.google.inject.util.Providers
+import java.io.BufferedReader
+import java.io.FileReader
+import java.util.Map
 import javax.inject.Named
 import javax.inject.Singleton
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.JavaIoFileSystemAccess
 import org.eclipse.xtext.resource.generic.AbstractGenericResourceRuntimeModule
+import com.google.inject.TypeLiteral
 
 class JdbcGeneratorModule extends AbstractGenericResourceRuntimeModule {
 	
 	static val JAVA = "JAVA"
+	static val CSV_SEPERATORS = "\\s|,|;";
 	
 	val JavaIoFileSystemAccess fsa
 	@Accessors
@@ -42,14 +47,34 @@ class JdbcGeneratorModule extends AbstractGenericResourceRuntimeModule {
 	var String parameterSourceAnnotationClass
 	@Accessors
 	var String rowMapperAnnotationClass
+	@Accessors
+	var boolean useOldFieldnameMapping = false
+	@Accessors
+	var boolean overrideExistingResources = false
+	@Accessors
+	var Map<String, String> customPropertyToColumnRules = newHashMap
 	
 	new (String genPath) {
 		fsa = new JavaIoFileSystemAccess
 		fsa.outputPath = genPath 
 	}
+	new (String genPath, String configPath) {
+		fsa = new JavaIoFileSystemAccess
+		fsa.outputPath = genPath 
+		val br = new BufferedReader(new FileReader(configPath));
+		System.out.println("Reading column name mappings listed in file " + configPath);
+		var String line = null;
+		while ((line = br.readLine()) !== null) {
+			val names = line.split(CSV_SEPERATORS);
+			if (names.length == 2 && !(line.startsWith("Property") && line.contains("Column"))) {
+				customPropertyToColumnRules.put(names.get(0), names.get(1))
+			}
+		}
+	}
 	
 	@Singleton
 	def void configureIFileSystemAccess2(Binder binder) {
+		fsa.outputConfigurations.get(IFileSystemAccess2.DEFAULT_OUTPUT).overrideExistingResources = overrideExistingResources
 		binder.bind (typeof(IFileSystemAccess2) ).toInstance(fsa)
 	}
 	
@@ -79,6 +104,14 @@ class JdbcGeneratorModule extends AbstractGenericResourceRuntimeModule {
 	@Named("rowMapperAnnotationClass")
 	def void configureRowMapperAnnotationClass(Binder binder) {
 		binder.bind (typeof(String)).annotatedWith(Names.named("rowMapperAnnotationClass")).toProvider(Providers.<String>of(rowMapperAnnotationClass));
+	}
+	@Named("useOldFieldnameMapping")
+	def void configureUseOldFieldnameMapping(Binder binder) {
+		binder.bind (typeof(boolean)).annotatedWith(Names.named("useOldFieldnameMapping")).toInstance(useOldFieldnameMapping);
+	}
+	@Named("customPropertyToColumnRules")
+	def void configureCustomPropertyToColumnRules(Binder binder) {
+		binder.bind (new TypeLiteral<Map<String, String>>() {}).annotatedWith(Names.named("customPropertyToColumnRules")).toInstance(customPropertyToColumnRules);
 	}
 	
 	override protected getFileExtensions() {
