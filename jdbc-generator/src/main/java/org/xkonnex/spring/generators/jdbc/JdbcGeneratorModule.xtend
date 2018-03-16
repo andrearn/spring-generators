@@ -53,6 +53,10 @@ class JdbcGeneratorModule extends AbstractGenericResourceRuntimeModule {
 	var boolean overrideExistingResources = false
 	@Accessors
 	var Map<String, String> customPropertyToColumnRules = newHashMap
+	@Accessors
+	var boolean withColumnCheck = false
+	@Accessors
+	var boolean withPropertyAssignmentCheck = false
 	
 	new (String genPath) {
 		fsa = new JavaIoFileSystemAccess
@@ -112,6 +116,14 @@ class JdbcGeneratorModule extends AbstractGenericResourceRuntimeModule {
 	@Named("customPropertyToColumnRules")
 	def void configureCustomPropertyToColumnRules(Binder binder) {
 		binder.bind (new TypeLiteral<Map<String, String>>() {}).annotatedWith(Names.named("customPropertyToColumnRules")).toInstance(customPropertyToColumnRules);
+	}
+	@Named("withColumnCheck")
+	def void  configureWithColumnCheck (Binder binder) {
+		binder.bind (typeof(boolean)).annotatedWith(Names.named("withColumnCheck")).toInstance(withColumnCheck);
+	}
+	@Named("withPropertyAssignmentCheck")
+	def void configureWithPropertyAssignmentCheck  (Binder binder) {
+		binder.bind (typeof(boolean)).annotatedWith(Names.named("withPropertyAssignmentCheck")).toInstance(withPropertyAssignmentCheck);
 	}
 	
 	override protected getFileExtensions() {
