@@ -35,26 +35,61 @@ class JdbcGeneratorModule extends AbstractGenericResourceRuntimeModule {
 	static val CSV_SEPERATORS = "\\s|,|;";
 	
 	val JavaIoFileSystemAccess fsa
+	/**
+	 * Whether bean properties with accessor methods throwing exceptions shall be ignored
+	 */
 	@Accessors
 	var boolean ignorePropertiesWithThrowsClauses = false
+	/**
+	 * Whether bean properties of complex types shall be ignored
+	 */
 	@Accessors
 	var boolean ignoreComplexProperties = true
 	@Accessors
 	var String beanBasePackage
+	/**
+	 * Base package of generated mappers. The name of the subpackage of beans inside 
+	 * beanBasePackage is being appended to the mapperBasePackage 
+	 */
 	@Accessors
 	var String mapperBasePackage
+	/**
+	 * Full qualified class name of the annotation class to mark Factories for SqlParameterSources, 
+	 * i.e. ParameterBuilders
+	 */
 	@Accessors
 	var String parameterSourceAnnotationClass
+	/**
+	 * Full qualified class name of the annotation class to mark RowMappers.
+	 */
 	@Accessors
 	var String rowMapperAnnotationClass
+	/**
+	 * Use the property name to column name mapping used by Spring <= 3.2.6 if true. Defaults to false. Use the
+	 * new name mapping scheme as of Spring JDBC 3.2.7 and later otherwise
+	 */
 	@Accessors
 	var boolean useOldFieldnameMapping = false
+	/**
+	 * Whether existing classes should be overwritten
+	 */
 	@Accessors
 	var boolean overrideExistingResources = false
+	/**
+	 * Map of custom property name mapping rules
+	 * 
+	 * property name -> column name
+	 */
 	@Accessors
 	var Map<String, String> customPropertyToColumnRules = newHashMap
+	/**
+	 * The RowMapper checks if the column to be assigned to a bean property is in the ResultSet
+	 */
 	@Accessors
 	var boolean withColumnCheck = false
+	/**
+	 * The RowMapper checks if all columns have been assigned to a bean property
+	 */
 	@Accessors
 	var boolean withPropertyAssignmentCheck = false
 	
@@ -62,6 +97,10 @@ class JdbcGeneratorModule extends AbstractGenericResourceRuntimeModule {
 		fsa = new JavaIoFileSystemAccess
 		fsa.outputPath = genPath 
 	}
+	/**
+	 * @param genPath path, where to generate mappers
+	 * @param configPath location of CSV-file containing custom property name mapping rules
+	 */
 	new (String genPath, String configPath) {
 		fsa = new JavaIoFileSystemAccess
 		fsa.outputPath = genPath 

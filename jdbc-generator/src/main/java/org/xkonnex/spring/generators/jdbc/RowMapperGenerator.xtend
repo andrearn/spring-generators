@@ -22,6 +22,7 @@ import javax.inject.Named
 import javax.annotation.Nullable
 import java.lang.reflect.Constructor
 import java.lang.reflect.Modifier
+import java.math.BigInteger
 
 /**
  * Generator for RowMappers that us the same semantics as BeanPropertyRowMappers, but 
@@ -144,6 +145,15 @@ class RowMapperGenerator {
 							assignedCols.add("«columnName»");
 						«ENDIF»
 					}
+				}
+			'''
+		} else if (pd.propertyType.isAssignableFrom(typeof(BigInteger))) {
+			'''
+				if (cols.contains("«pd.name.underscoreName.toUpperCase»")) {
+					bo.«pd.toSetterCall("BigInteger.valueOf(rs." + pd.toResultSetAccessorCall+")")»;
+					«IF withColumnCheck && withPropertyAssignmentCheck» 
+						assignedCols.add("«columnName»");
+					«ENDIF»
 				}
 			'''
 		} else {

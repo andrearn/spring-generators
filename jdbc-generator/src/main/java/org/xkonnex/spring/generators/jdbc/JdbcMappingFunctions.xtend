@@ -23,6 +23,7 @@ import java.sql.Clob
 import java.sql.Date
 import java.sql.Time
 import java.sql.Timestamp
+import java.math.BigInteger
 
 class JdbcMappingFunctions {
 	
@@ -63,6 +64,8 @@ class JdbcMappingFunctions {
 			'''getTimestamp'''
 		} else if (typeof(BigDecimal).equals(requiredType)) {
 			'''getBigDecimal'''
+		} else if (typeof(BigInteger).equals(requiredType)) {
+			'''getLong'''
 		} else if (typeof(Blob).equals(requiredType)) {
 			'''getBlob'''
 		} else if (typeof(Clob).equals(requiredType)) {
