@@ -32,7 +32,7 @@
 	<scm>
 		<url>https://github.com/andrearn/spring-generators</url>
 		<connection>scm:git:https://github.com/andrearn/spring-generators.git</connection>
-		<developerConnection>scm:git:git@github.com/andrearn/spring-generators.git</developerConnection>
+		<developerConnection>scm:git:https://github.com/andrearn/spring-generators.git</developerConnection>
       <tag>jdbc-generator-1.0.1</tag>
   </scm>
 
