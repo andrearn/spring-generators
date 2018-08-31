@@ -31,10 +31,10 @@
 
 	<scm>
 		<url>https://github.com/andrearn/spring-generators</url>
-		<connection>scm:git:git://github.com/andrearn/spring-generators.git</connection>
+		<connection>scm:git:https://github.com/andrearn/spring-generators.git</connection>
 		<developerConnection>scm:git:git@github.com/andrearn/spring-generators.git</developerConnection>
-	  <tag>jdbc-generator-1.0.0</tag>
-  </scm>
+        <tag>jdbc-generator-1.0.0</tag>
+    </scm>
 
 	<developers>
 		<developer>
