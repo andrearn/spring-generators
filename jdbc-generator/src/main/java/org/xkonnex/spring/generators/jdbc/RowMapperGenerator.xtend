@@ -81,14 +81,16 @@ class RowMapperGenerator {
 	def toRowMapper(Class<?> clazz, String packageName) '''
 		package «packageName»;
 		
-		«clazz.toPropertyTypeImports»
+		«clazz.toPropertyTypeImports("java.util.Date", "java.sql.Timestamp", 
+			"java.sql.Date", "java.math.BigDecimal", "java.security.Timestamp", 
+			"java.util.List", "java.util.Set", "java.util.Map")»
 		import java.sql.ResultSet;
-		import java.sql.ResultSetMetaData;
+		«IF withColumnCheck»import java.sql.ResultSetMetaData;«ENDIF»
 		import java.sql.SQLException;
-		«IF withColumnCheck»import java.util.ArrayList;«ENDIF»
-		import java.util.HashSet;
-		«IF withColumnCheck»import java.util.List;«ENDIF»
-		import java.util.Set;
+		«IF withPropertyAssignmentCheck»import java.util.ArrayList;«ENDIF»
+		«IF withColumnCheck»import java.util.HashSet;«ENDIF»
+		«IF withPropertyAssignmentCheck»import java.util.List;«ENDIF»
+		«IF withColumnCheck»import java.util.Set;«ENDIF»
 		
 		import «clazz.canonicalName»;
 		«IF rowMapperAnnotationClass !== null»
@@ -102,7 +104,7 @@ class RowMapperGenerator {
 		«ENDIF»
 		public class «clazz.simpleName»RowMapper implements RowMapper<«clazz.simpleName»> {
 		
-			«clazz.writableProperties.filter[!isComplexProperty || !ignoreComplexProperties].map[toColumnNameConstant].join»
+			«clazz.writableProperties.filter[!isComplexProperty || !ignoreComplexProperties].map[toColumnNameConstant].map[toString].toSet.sort.join»
 
 			@Override
 			public «clazz.simpleName» mapRow(final ResultSet rs, final int rowNum) throws SQLException {
@@ -183,6 +185,8 @@ class RowMapperGenerator {
 	
 	private def toColumnNameConstant(PropertyDescriptor pd) {
 		val columnName = pd.name.underscoreName.toUpperCase
-		return '''private static final «columnName» = "«columnName»";'''
+		'''
+			private static final String «columnName» = "«columnName»";
+		'''
 	}
 }

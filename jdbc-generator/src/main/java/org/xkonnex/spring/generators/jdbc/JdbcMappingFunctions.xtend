@@ -31,7 +31,7 @@ class JdbcMappingFunctions {
 	extension SpringBeanMappingFunctions
 	
 	def toResultSetAccessorCall(PropertyDescriptor pd) {
-		'''«pd.propertyType.columnTypeAccessorName»("«pd.name.underscoreName.toUpperCase»")'''
+		'''«pd.propertyType.columnTypeAccessorName»(«pd.name.underscoreName.toUpperCase»)'''
 	}
 
 	def columnTypeAccessorName(Class<?> requiredType) {

@@ -51,10 +51,10 @@ class BeanMappingFunctions {
 		}
 	}
 	
-	def toPropertyTypeImports(Class<?> clazz) {
+	def toPropertyTypeImports(Class<?> clazz, String ... ignoredTypes) {
 		'''
 			«FOR type : clazz.importedTypes»
-				import «type»;
+				«IF !ignoredTypes.contains(type)»import «type»;«ENDIF»
 			«ENDFOR»
 		'''
 	}
