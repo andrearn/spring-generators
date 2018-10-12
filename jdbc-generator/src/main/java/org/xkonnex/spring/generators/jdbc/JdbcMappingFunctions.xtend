@@ -28,7 +28,7 @@ import java.math.BigInteger
 class JdbcMappingFunctions {
 	
 	@Inject
-	private extension SpringBeanMappingFunctions
+	extension SpringBeanMappingFunctions
 	
 	def toResultSetAccessorCall(PropertyDescriptor pd) {
 		'''«pd.propertyType.columnTypeAccessorName»("«pd.name.underscoreName.toUpperCase»")'''

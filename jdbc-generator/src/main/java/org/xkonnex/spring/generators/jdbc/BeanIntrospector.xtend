@@ -16,7 +16,6 @@
 package org.xkonnex.spring.generators.jdbc
 
 import java.beans.Introspector
-import java.beans.PropertyDescriptor
 
 class BeanIntrospector {
 

@@ -30,36 +30,35 @@ import java.math.BigInteger
  */
 class RowMapperGenerator {
 	
-	@Inject 
-	private IFileSystemAccess2 fsa
+	@Inject IFileSystemAccess2 fsa
 	
 	@Inject
-	private extension JdbcMappingFunctions
+	extension JdbcMappingFunctions
 	
 	@Inject 
-	private extension BeanMappingFunctions
+	extension BeanMappingFunctions
 	
 	@Inject
-	private extension BeanIntrospector
+	extension BeanIntrospector
 	
 	@Inject 
-	private extension GeneratorExtensions
+	extension GeneratorExtensions
 
 	@Inject
-	private extension SpringBeanMappingFunctions
+	extension SpringBeanMappingFunctions
 	
 	@Inject @Named("ignoreComplexProperties")
-	private Boolean ignoreComplexProperties
+	Boolean ignoreComplexProperties
 	
 	@Inject @Named("rowMapperAnnotationClass")
 	@Nullable
-	private String rowMapperAnnotationClass
+	String rowMapperAnnotationClass
 
 	@Inject @Named("withColumnCheck")
-	private Boolean withColumnCheck
+	Boolean withColumnCheck
 
 	@Inject @Named("withPropertyAssignmentCheck")
-	private Boolean withPropertyAssignmentCheck
+	Boolean withPropertyAssignmentCheck
 	
 	def generate(Class<?> bean) {
 		generate(bean, bean.toPackage)
@@ -86,9 +85,9 @@ class RowMapperGenerator {
 		import java.sql.ResultSet;
 		import java.sql.ResultSetMetaData;
 		import java.sql.SQLException;
-		import java.util.ArrayList;
+		«IF withColumnCheck»import java.util.ArrayList;«ENDIF»
 		import java.util.HashSet;
-		import java.util.List;
+		«IF withColumnCheck»import java.util.List;«ENDIF»
 		import java.util.Set;
 		
 		import «clazz.canonicalName»;
@@ -103,8 +102,10 @@ class RowMapperGenerator {
 		«ENDIF»
 		public class «clazz.simpleName»RowMapper implements RowMapper<«clazz.simpleName»> {
 		
+			«clazz.writableProperties.filter[!isComplexProperty || !ignoreComplexProperties].map[toColumnNameConstant].join»
+
 			@Override
-			public «clazz.simpleName» mapRow(ResultSet rs, int rowNum) throws SQLException {
+			public «clazz.simpleName» mapRow(final ResultSet rs, final int rowNum) throws SQLException {
 				«IF withColumnCheck»
 					Set<String> cols = new HashSet<>();
 					«IF withPropertyAssignmentCheck»
@@ -137,34 +138,51 @@ class RowMapperGenerator {
 		val columnName = pd.name.underscoreName.toUpperCase
 		if (pd.propertyType.isAssignableFrom(typeof(String))) {
 			'''
-				if (cols.contains("«columnName»")) {
+				«IF withColumnCheck» 
+				if (cols.contains(«columnName»)) {
+				«ENDIF»
 					String «pd.name» = rs.«pd.toResultSetAccessorCall»;
 					if («pd.name» != null) {
 						bo.«pd.toSetterCall(pd.name)»;
 						«IF withColumnCheck && withPropertyAssignmentCheck» 
-							assignedCols.add("«columnName»");
+							assignedCols.add(«columnName»);
 						«ENDIF»
 					}
+				«IF withColumnCheck» 
 				}
+				«ENDIF»
 			'''
 		} else if (pd.propertyType.isAssignableFrom(typeof(BigInteger))) {
 			'''
-				if (cols.contains("«pd.name.underscoreName.toUpperCase»")) {
+				«IF withColumnCheck» 
+				if (cols.contains(«columnName»)) {
+				«ENDIF»
 					bo.«pd.toSetterCall("BigInteger.valueOf(rs." + pd.toResultSetAccessorCall+")")»;
 					«IF withColumnCheck && withPropertyAssignmentCheck» 
-						assignedCols.add("«columnName»");
+						assignedCols.add(«columnName»);
 					«ENDIF»
+				«IF withColumnCheck» 
 				}
+				«ENDIF»
 			'''
 		} else {
 			'''
-				if (cols.contains("«pd.name.underscoreName.toUpperCase»")) {
+				«IF withColumnCheck» 
+				if (cols.contains(«columnName»)) {
+				«ENDIF»
 					bo.«pd.toSetterCall("rs." + pd.toResultSetAccessorCall)»;
 					«IF withColumnCheck && withPropertyAssignmentCheck» 
-						assignedCols.add("«columnName»");
+						assignedCols.add(«columnName»);
 					«ENDIF»
+				«IF withColumnCheck» 
 				}
+				«ENDIF»
 			'''
 		}
+	}
+	
+	private def toColumnNameConstant(PropertyDescriptor pd) {
+		val columnName = pd.name.underscoreName.toUpperCase
+		return '''private static final «columnName» = "«columnName»";'''
 	}
 }

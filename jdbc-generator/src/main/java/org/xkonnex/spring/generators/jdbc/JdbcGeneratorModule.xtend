@@ -31,7 +31,6 @@ import com.google.inject.TypeLiteral
 
 class JdbcGeneratorModule extends AbstractGenericResourceRuntimeModule {
 	
-	static val JAVA = "JAVA"
 	static val CSV_SEPERATORS = "\\s|,|;";
 	
 	val JavaIoFileSystemAccess fsa

@@ -23,15 +23,15 @@ import javax.annotation.Nullable
 class BeanMappingFunctions {
 	
 	@Inject
-	private extension BeanIntrospector
+	extension BeanIntrospector
 	
 	@Inject @Named("beanBasePackage") 
 	@Nullable
-	private String beanBasePackage
+	String beanBasePackage
 	
 	@Inject @Named("mapperBasePackage")
 	@Nullable
-	private String mapperBasePackage
+	String mapperBasePackage
 	
 	def toSetterCall(PropertyDescriptor pd, String expression) {
 		if (pd.writeMethod !== null) {

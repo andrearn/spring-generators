@@ -27,27 +27,24 @@ import javax.annotation.Nullable
 class ParameterSourceGenerator {
 	
 	@Inject 
-	private IFileSystemAccess2 fsa
-	
-	@Inject
-	private extension JdbcMappingFunctions
+	IFileSystemAccess2 fsa
 	
 	@Inject 
-	private extension BeanMappingFunctions
+	extension BeanMappingFunctions
 	
 	@Inject
-	private extension BeanIntrospector
+	extension BeanIntrospector
 
 	@Inject 
-	private extension GeneratorExtensions
+	extension GeneratorExtensions
 	
 	@Inject
 	@Named("ignorePropertiesWithThrowsClauses")
-	private boolean ignorePropertiesWithThrowsClauses
+	boolean ignorePropertiesWithThrowsClauses
 
 	@Inject @Named("parameterSourceAnnotationClass")
 	@Nullable
-	private String parameterSourceAnnotationClass
+	String parameterSourceAnnotationClass
 	
 	/**
 	 * Generate a builder that that build a MapSqlParameterSource based on the 
@@ -88,14 +85,14 @@ class ParameterSourceGenerator {
 			«ENDIF»
 			public class «bean.simpleName»ParameterBuilder {
 				
-				public static MapSqlParameterSource toParameterSource(«bean.simpleName» bean) {
+				public static MapSqlParameterSource toParameterSource(final «bean.simpleName» bean) {
 					MapSqlParameterSource params = new MapSqlParameterSource();
 					«bean.readableProperties.filterNull.map[toPropertyRegistration("params", "bean")].join»
 					return params;
 				}
 			
 			}
-		
+			
 		'''
 	}
 	
