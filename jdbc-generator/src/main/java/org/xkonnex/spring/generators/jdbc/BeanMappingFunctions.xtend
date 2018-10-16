@@ -25,6 +25,9 @@ class BeanMappingFunctions {
 	@Inject
 	extension BeanIntrospector
 	
+	@Inject
+	extension SpringBeanMappingFunctions
+	
 	@Inject @Named("beanBasePackage") 
 	@Nullable
 	String beanBasePackage
@@ -32,6 +35,9 @@ class BeanMappingFunctions {
 	@Inject @Named("mapperBasePackage")
 	@Nullable
 	String mapperBasePackage
+	
+	@Inject @Named("useConstantsForColumnNames")
+	Boolean useConstantsForColumnNames
 	
 	def toSetterCall(PropertyDescriptor pd, String expression) {
 		if (pd.writeMethod !== null) {
@@ -65,5 +71,10 @@ class BeanMappingFunctions {
 		} else {
 			clazz.package.name
 		}
+	}
+
+	def toColumnNameExpr(PropertyDescriptor pd) {
+		val columnName = pd.name.underscoreName.toUpperCase
+		if(useConstantsForColumnNames)  '''«columnName»''' else '''"«columnName»"'''
 	}
 }

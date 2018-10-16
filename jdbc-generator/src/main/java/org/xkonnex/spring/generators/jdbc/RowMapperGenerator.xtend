@@ -60,6 +60,9 @@ class RowMapperGenerator {
 	@Inject @Named("withPropertyAssignmentCheck")
 	Boolean withPropertyAssignmentCheck
 	
+	@Inject @Named("useConstantsForColumnNames")
+	Boolean useConstantsForColumnNames
+	
 	def generate(Class<?> bean) {
 		generate(bean, bean.toPackage)
 	}
@@ -104,7 +107,7 @@ class RowMapperGenerator {
 		«ENDIF»
 		public class «clazz.simpleName»RowMapper implements RowMapper<«clazz.simpleName»> {
 		
-			«clazz.writableProperties.filter[!isComplexProperty || !ignoreComplexProperties].map[toColumnNameConstant].map[toString].toSet.sort.join»
+			«IF useConstantsForColumnNames»«clazz.writableProperties.filter[!isComplexProperty || !ignoreComplexProperties].map[toColumnNameConstant].map[toString].toSet.sort.join»«ENDIF»
 
 			@Override
 			public «clazz.simpleName» mapRow(final ResultSet rs, final int rowNum) throws SQLException {
@@ -137,17 +140,17 @@ class RowMapperGenerator {
 	
 	
 	def toPropertyAssignment(PropertyDescriptor pd) {
-		val columnName = pd.name.underscoreName.toUpperCase
+		val columnNameExpr = pd.toColumnNameExpr
 		if (pd.propertyType.isAssignableFrom(typeof(String))) {
 			'''
 				«IF withColumnCheck» 
-				if (cols.contains(«columnName»)) {
+				if (cols.contains(«columnNameExpr»)) {
 				«ENDIF»
 					String «pd.name» = rs.«pd.toResultSetAccessorCall»;
 					if («pd.name» != null) {
 						bo.«pd.toSetterCall(pd.name)»;
 						«IF withColumnCheck && withPropertyAssignmentCheck» 
-							assignedCols.add(«columnName»);
+							assignedCols.add(«columnNameExpr»);
 						«ENDIF»
 					}
 				«IF withColumnCheck» 
@@ -157,11 +160,11 @@ class RowMapperGenerator {
 		} else if (pd.propertyType.isAssignableFrom(typeof(BigInteger))) {
 			'''
 				«IF withColumnCheck» 
-				if (cols.contains(«columnName»)) {
+				if (cols.contains(«columnNameExpr»)) {
 				«ENDIF»
 					bo.«pd.toSetterCall("BigInteger.valueOf(rs." + pd.toResultSetAccessorCall+")")»;
 					«IF withColumnCheck && withPropertyAssignmentCheck» 
-						assignedCols.add(«columnName»);
+						assignedCols.add(«columnNameExpr»);
 					«ENDIF»
 				«IF withColumnCheck» 
 				}
@@ -170,11 +173,11 @@ class RowMapperGenerator {
 		} else {
 			'''
 				«IF withColumnCheck» 
-				if (cols.contains(«columnName»)) {
+				if (cols.contains(«columnNameExpr»)) {
 				«ENDIF»
 					bo.«pd.toSetterCall("rs." + pd.toResultSetAccessorCall)»;
 					«IF withColumnCheck && withPropertyAssignmentCheck» 
-						assignedCols.add(«columnName»);
+						assignedCols.add(«columnNameExpr»);
 					«ENDIF»
 				«IF withColumnCheck» 
 				}
@@ -189,4 +192,5 @@ class RowMapperGenerator {
 			private static final String «columnName» = "«columnName»";
 		'''
 	}
+	
 }
